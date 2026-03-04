@@ -44,6 +44,10 @@ cargo run
 
 默认监听地址：`http://127.0.0.1:3000`  
 健康检查接口：`GET /api/health`
+任务接口：
+
+- `GET /api/tasks`：获取任务列表
+- `POST /api/tasks`：创建任务，示例请求体：`{"title":"实现后端最小闭环"}`
 
 示例：
 
