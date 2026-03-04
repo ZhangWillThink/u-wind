@@ -15,6 +15,8 @@ pub enum AppError {
     Validation(String),
     #[error("内部错误: {0}")]
     Internal(String),
+    #[error("资源不存在: {0}")]
+    NotFound(String),
 }
 
 #[derive(Debug, Serialize)]
@@ -32,12 +34,18 @@ impl AppError {
     pub fn internal(message: impl Into<String>) -> Self {
         Self::Internal(message.into())
     }
+
+    /// 创建资源不存在错误。
+    pub fn not_found(message: impl Into<String>) -> Self {
+        Self::NotFound(message.into())
+    }
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let status = match &self {
             Self::Validation(_) => StatusCode::BAD_REQUEST,
+            Self::NotFound(_) => StatusCode::NOT_FOUND,
             Self::Io(_) | Self::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
         let body = Json(ErrorResponse {

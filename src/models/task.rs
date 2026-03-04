@@ -24,3 +24,9 @@ impl Task {
 pub struct CreateTaskRequest {
     pub title: String,
 }
+
+/// 更新任务请求体。
+#[derive(Debug, Deserialize)]
+pub struct UpdateTaskRequest {
+    pub completed: bool,
+}
