@@ -11,6 +11,8 @@ use thiserror::Error;
 pub enum AppError {
     #[error("IO 错误: {0}")]
     Io(#[from] std::io::Error),
+    #[error("数据库错误: {0}")]
+    Database(#[from] sqlx::Error),
     #[error("参数错误: {0}")]
     Validation(String),
     #[error("内部错误: {0}")]
@@ -46,7 +48,9 @@ impl IntoResponse for AppError {
         let status = match &self {
             Self::Validation(_) => StatusCode::BAD_REQUEST,
             Self::NotFound(_) => StatusCode::NOT_FOUND,
-            Self::Io(_) | Self::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Io(_) | Self::Internal(_) | Self::Database(_) => {
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
         };
         let body = Json(ErrorResponse {
             message: self.to_string(),

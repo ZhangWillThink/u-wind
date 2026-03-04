@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig, type PluginOption } from 'vite'
 import path from 'path'
 import react from '@vitejs/plugin-react'
@@ -10,5 +11,10 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test-setup.ts'],
   },
 })

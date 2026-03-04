@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
@@ -19,7 +17,7 @@ use crate::{
 
 #[derive(Clone)]
 struct AppState {
-    task_store: Arc<RwLock<TaskStore>>,
+    task_store: TaskStore,
 }
 
 /// 列表筛选查询参数。
@@ -29,10 +27,8 @@ struct ListTasksQuery {
 }
 
 /// 构建后端路由。
-pub fn router() -> Router {
-    let state = AppState {
-        task_store: Arc::new(RwLock::new(TaskStore::new())),
-    };
+pub fn router(task_store: TaskStore) -> Router {
+    let state = AppState { task_store };
 
     Router::new()
         .route("/api/health", get(health_handler))
@@ -55,24 +51,15 @@ async fn list_tasks_handler(
     State(state): State<AppState>,
     Query(query): Query<ListTasksQuery>,
 ) -> Result<Json<Vec<Task>>, AppError> {
-    let store = state
-        .task_store
-        .read()
-        .map_err(|_| AppError::internal("读取任务存储失败"))?;
-
-    Ok(Json(store.list_tasks(query.completed)))
+    let tasks = state.task_store.list_tasks(query.completed).await?;
+    Ok(Json(tasks))
 }
 
 async fn create_task_handler(
     State(state): State<AppState>,
     Json(payload): Json<CreateTaskRequest>,
 ) -> Result<Json<Task>, AppError> {
-    let mut store = state
-        .task_store
-        .write()
-        .map_err(|_| AppError::internal("写入任务存储失败"))?;
-    let task = store.create_task(payload.title)?;
-
+    let task = state.task_store.create_task(payload.title).await?;
     Ok(Json(task))
 }
 
@@ -81,12 +68,7 @@ async fn update_task_handler(
     Path(id): Path<u64>,
     Json(payload): Json<UpdateTaskRequest>,
 ) -> Result<Json<Task>, AppError> {
-    let mut store = state
-        .task_store
-        .write()
-        .map_err(|_| AppError::internal("写入任务存储失败"))?;
-    let task = store.update_task(id, payload.completed)?;
-
+    let task = state.task_store.update_task(id, payload.completed).await?;
     Ok(Json(task))
 }
 
@@ -94,11 +76,6 @@ async fn delete_task_handler(
     State(state): State<AppState>,
     Path(id): Path<u64>,
 ) -> Result<StatusCode, AppError> {
-    let mut store = state
-        .task_store
-        .write()
-        .map_err(|_| AppError::internal("写入任务存储失败"))?;
-    store.delete_task(id)?;
-
+    state.task_store.delete_task(id).await?;
     Ok(StatusCode::NO_CONTENT)
 }
