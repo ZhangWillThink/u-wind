@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "antfu": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "6935586ef3ab02e18747a4477d396e692bc96e8f28b0d95b374ffc37fce74cda"
+    },
+    "tsdown": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "0230aa0d3df7c839d7cd3efa34cf18cf203da79a06c02fc8ebfdb6cd4142b593"
+    },
+    "turborepo": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "0da78a2acd422218587209e5b74e210d8259233d7df475c16be9180451117bd1"
+    },
+    "vite": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "0293c251e4d6ff4818e8d2faed2a92f98d8d73c2f4819bd754faf93ca134d6fe"
+    },
+    "vitest": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "669c7275f7e1379b06b2bcfa593603aead4c983b951c7e8edbc09640aa38d0a1"
+    },
+    "web-design-guidelines": {
+      "source": "antfu/skills",
+      "sourceType": "github",
+      "computedHash": "e93e63afa6a7cde48cb41bd271110da942ee99e115b5a5774158b1f239926334"
+    }
+  }
+}
